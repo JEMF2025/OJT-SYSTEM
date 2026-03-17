@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4Ps Lifeliner · DU Dashboard (Auto‑date records)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --secondary: #f093fb;
+            --accent: #f5576c;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --delete: #ef4444;
+            --delete-hover: #dc2626;
+            --edit: #3b82f6;
+            --edit-hover: #2563eb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Auth Pages */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            padding: 20px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 300% 100%;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .form-section {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .form-section.hidden {
+            display: none;
+        }
+
+        .form-section.active {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 0 16px 0 48px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        select {
+            padding: 0 16px;
+        }
+
+        textarea {
+            padding-top: 16px;
+            height: auto;
+            resize: vertical;
+        }
+
+        select option {
+            background: #1e293b;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+
+        .submit-btn, .btn-primary, .btn-secondary, .btn-edit, .btn-view {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover, .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            width: auto;
+            padding: 12px 24px;
+            height: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-primary {
+            width: auto;
+            padding: 12px 24px;
+            height: auto;
+        }
+
+        .btn-edit, .btn-view {
+            width: auto;
+            padding: 6px 12px;
+            height: auto;
+            font-size: 13px;
+            text-transform: none;
+            letter-spacing: normal;
+            margin: 0 4px;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .switch-text {
+            text-align: center;
+            margin-top: 24px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .switch-text a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 4px;
+            cursor: pointer;
+        }
+
+        .switch-text a:hover {
+            text-decoration: underline;
+        }
+
+        .icon-user::before { content: '👤'; }
+        .icon-email::before { content: '@'; font-weight: bold; }
+        .icon-lock::before { content: '🔒'; }
+        .icon-eye::before { content: '👁'; }
+        .icon-eye-off::before { content: '🙈'; }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .divider span {
+            padding: 0 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-row .input-group {
+            margin-bottom: 0;
+        }
+
+        /* Dashboard */
+        .dashboard-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard-container.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            background: transparent;
+            border: none;
+            font-size: 16px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .user-profile {
+            margin-top: auto;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+            max-width: calc(100% - 280px);
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+        }
+
+        /* Dashboard Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.purple { background: rgba(102, 126, 234, 0.2); }
+        .stat-icon.pink { background: rgba(240, 147, 251, 0.2); }
+        .stat-icon.orange { background: rgba(245, 87, 108, 0.2); }
+        .stat-icon.blue { background: rgba(79, 172, 254, 0.2); }
+
+        .stat-change {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* 4Ps Application Form */
+        .form-4ps {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 40px -15px black;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            background: linear-gradient(145deg, #1e2b3c, #0f1a28);
+            padding: 0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 2px solid #000;
+            overflow: hidden;
+        }
+
+        .form-title-bar {
+            background: #fff;
+            color: #000;
+            padding: 16px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+            border-bottom: 2px solid #000;
+        }
+
+        .form-header-content {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 16px;
+            align-items: center;
+            padding: 16px;
+            color: white;
+        }
+
+        .header-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-field label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .header-field input, .header-field span {
+            font-size: 14px;
+            color: white;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 0;
+            height: auto;
+            min-height: 24px;
+        }
+
+        .photo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 160px;
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: 16px;
+        }
+
+        .photo-box {
+            width: 140px;
+            height: 160px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px dashed rgba(102, 126, 234, 0.6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-box:hover {
+            background: rgba(102, 126, 234, 0.15);
+            border-color: var(--primary);
+        }
+
+        .photo-box.has-image {
+            border-style: solid;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-input {
+            display: none;
+        }
+
+        .photo-label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        /* Form Table Styling */
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid #000;
+        }
+
+        .form-table th {
+            background: #1e2b3c;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-table td {
+            padding: 12px;
+            border: 1px solid #000;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .form-table input, .form-table select {
+            width: 100%;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 6px;
+            padding: 8px 12px !important;
+            color: white;
+            font-size: 13px;
+        }
+
+        .form-table input:focus, .form-table select:focus {
+            background: rgba(102, 126, 234, 0.1) !important;
+            border-color: rgba(102, 126, 234, 0.3) !important;
+        }
+
+        .form-table select option {
+            background: #1e293b;
+            color: white;
+        }
+
+        .row-header {
+            background: #1e2b3c;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+        }
+
+        /* Ownership Section - UPDATED with others text field */
+        .ownership-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ownership-label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .ownership-options {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .ownership-options label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .ownership-options input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            margin: 0;
+        }
+
+        .ownership-others-input {
+            margin-left: 26px;
+            margin-top: 4px;
+            width: calc(100% - 26px);
+        }
+
+        .ownership-others-input input {
+            width: 45%;
+            height: 32px;
+            background: rgba(255,255,255,0.08) !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+            border-radius: 4px;
+            padding: 4px 8px !important;
+            color: white;
+            font-size: 13px;;
+        }
+
+        /* Processor Section */
+        .processor-section {
+            background: #111c2d;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px dashed var(--primary);
+            margin-bottom: 24px;
+        }
+
+        .processor-title {
+            color: #f1f5f9;
+            font-weight: 600;
+            margin-bottom: 16px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .document-checklist {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .document-checklist label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: white;
+        }
+
+        .document-checklist input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        /* Evaluation Section - UPDATED */
+        .evaluation-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: white;
+            cursor: pointer;
+            min-width: 80px;
+        }
+
+        .radio-group input[type="radio"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            margin: 0;
+        }
+
+        .reason-field {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .reason-field label {
+            font-size: 10px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .reason-field input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 4px;
+            padding: 6px 10px !important;
+            color: white;
+            height: 32px;
+            font-size: 12px;
+        }
+
+        .processor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .processor-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .processor-field label {
+            font-size: 10px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .processor-field input, .processor-field select {
+            background: rgba(0, 0, 0, 0.25) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 4px;
+            padding: 6px 10px !important;
+            color: white;
+            font-size: 12px;
+            height: 34px;
+        }
+
+        .processor-field input:focus, .processor-field select:focus {
+            background: rgba(102, 126, 234, 0.1) !important;
+            border-color: rgba(102, 126, 234, 0.3) !important;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: #0f1a24;
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .disclaimer strong {
+            color: white;
+        }
+
+        /* Signature Section */
+        .signature-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 24px;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .signature-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .signature-item {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .signature-item label {
+            display: block;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .signature-line-input {
+            width: 100%;
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 0 !important;
+            height: 36px !important;
+            padding: 6px 0 !important;
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .signature-line-input:focus {
+            border-bottom-color: var(--primary) !important;
+        }
+
+        .signature-caption {
+            font-size: 10px;
+            color: #94a3b8;
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .form-actions button {
+            font-size: 13px;
+            padding: 8px 20px;
+            height: auto;
+        }
+
+        /* Record table */
+        .record-table {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            text-align: left;
+            padding: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .delete-btn, .edit-btn, .view-btn {
+            padding: 4px 10px;
+            font-size: 11px;
+            border-radius: 4px;
+        }
+
+        /* Profile settings */
+        .settings-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 32px;
+        }
+
+        .profile-sidebar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .settings-main {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.25) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 8px;
+            padding: 8px 12px !important;
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            background: rgba(102, 126, 234, 0.1) !important;
+            border-color: rgba(102, 126, 234, 0.3) !important;
+        }
+
+        .settings-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .settings-buttons button {
+            flex: 1;
+        }
+
+        /* Modal for Viewing/Editing */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 1000px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* mobile */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 101;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: flex; align-items: center; justify-content: center; }
+            .sidebar { transform: translateX(-100%); transition: 0.3s ease; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; max-width: 100%; padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .settings-container { grid-template-columns: 1fr; }
+            .form-header-content { grid-template-columns: 1fr; }
+            .photo-container { border-left: none; border-top: 2px solid rgba(255, 255, 255, 0.1); padding-left: 0; padding-top: 16px; }
+            .processor-grid { grid-template-columns: 1fr; }
+            .signature-section { flex-direction: column; }
+            .signature-row { flex-direction: column; }
+            .form-actions { flex-direction: column; }
+            .form-row { grid-template-columns: 1fr; }
+            .settings-buttons { flex-direction: column; }
+            .action-buttons { flex-direction: column; }
+            .modal-content { padding: 20px; }
+            .evaluation-container { flex-direction: column; align-items: flex-start; }
+            .radio-group { width: 100%; justify-content: flex-start; }
+            .ownership-options { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
+
+        /* print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-section, #print-section * {
+                visibility: visible;
+            }
+            #print-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                color: black;
+                padding: 20px;
+            }
+            #print-section .form-table {
+                border: 2px solid #000;
+            }
+            #print-section .form-table td {
+                border: 1px solid #000;
+                color: black;
+            }
+            #print-section input, #print-section select {
+                border: none;
+                background: transparent;
+                color: black;
+                font-weight: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth -->
+    <div class="auth-container" id="auth-container">
+        <div class="auth-card">
+            <!-- Register Section (Default) -->
+            <div id="register-section" class="form-section active">
+                <h1>Create Account</h1>
+                <p class="subtitle">Join 4Ps Distribution Utility</p>
+                <form id="register-form" onsubmit="handleRegister(event)">
+                    <div class="form-row">
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <input type="text" id="reg-firstname" placeholder="First Name" required>
+                                <span class="input-icon icon-user"></span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <input type="text" id="reg-lastname" placeholder="Last Name" required>
+                                <span class="input-icon icon-user"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <input type="email" id="reg-email" placeholder="Email Address" required>
+                            <span class="input-icon icon-email"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <input type="password" id="reg-password" placeholder="Password" required>
+                                <span class="input-icon icon-lock"></span>
+                                <button type="button" class="toggle-password" onclick="togglePassword('reg-password', this)"><span class="icon-eye"></span></button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <input type="password" id="reg-confirm-password" placeholder="Confirm Password" required>
+                                <span class="input-icon icon-lock"></span>
+                                <button type="button" class="toggle-password" onclick="togglePassword('reg-confirm-password', this)"><span class="icon-eye"></span></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="register-btn" style="margin-top: 24px;">Create Account</button>
+                </form>
+                <p class="switch-text">Already have an account? <a onclick="switchToSignIn()">Sign In</a></p>
+            </div>
+
+            <!-- Sign In Section -->
+            <div id="signin-section" class="form-section hidden">
+                <h1>4Ps DU Access</h1>
+                <p class="subtitle">Sign in to manage applications</p>
+                <div class="divider"><span>Or use credentials</span></div>
+                <form id="signin-form" onsubmit="handleSignIn(event)">
+                    <div class="input-group"><div class="input-wrapper"><input type="email" id="signin-email" placeholder="Email" required><span class="input-icon icon-email"></span></div></div>
+                    <div class="input-group"><div class="input-wrapper"><input type="password" id="signin-password" placeholder="Password" required><span class="input-icon icon-lock"></span><button type="button" class="toggle-password" onclick="togglePassword('signin-password', this)"><span class="icon-eye"></span></button></div></div>
+                    <button type="submit" class="submit-btn" id="signin-btn">Sign In</button>
+                </form>
+                <p class="switch-text">Don't have an account? <a onclick="switchToRegister()">Register</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard-container" id="dashboard-container">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <aside class="sidebar" id="sidebar">
+            <div class="logo"><span>◆</span><span>4Ps Lifeliner</span></div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><button class="nav-link active" onclick="showSection('overview')"><span class="nav-icon">📊</span><span>Dashboard</span></button></li>
+                    <li class="nav-item"><button class="nav-link" onclick="showSection('profileSettings')"><span class="nav-icon">👤</span><span>Profile</span></button></li>
+                    <li class="nav-item"><button class="nav-link" onclick="showSection('fourpsApp')"><span class="nav-icon">📋</span><span>4Ps Application</span></button></li>
+                    <li class="nav-item"><button class="nav-link" onclick="showSection('records')"><span class="nav-icon">📁</span><span>Record</span></button></li>
+                </ul>
+            </nav>
+            <div class="user-profile">
+                <div class="user-info">
+                    <div class="user-avatar" id="user-avatar">JD</div>
+                    <div class="user-details"><h4 id="user-name">Juan Dela Cruz</h4><p id="user-email">juan@4ps.gov</p></div>
+                </div>
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Dashboard / Overview section -->
+            <div id="overview-section" class="content-section active">
+                <div class="page-header"><h2>Dashboard Overview</h2><p>Welcome back, manage 4Ps applications.</p></div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-header"><div class="stat-icon purple">📋</div><span class="stat-change positive">+3</span></div><div class="stat-value">128</div><div class="stat-label">Applications today</div></div>
+                    <div class="stat-card"><div class="stat-header"><div class="stat-icon pink">👥</div><span class="stat-change positive">+12</span></div><div class="stat-value">1,482</div><div class="stat-label">Total beneficiaries</div></div>
+                    <div class="stat-card"><div class="stat-header"><div class="stat-icon orange">✅</div><span class="stat-change positive">85%</span></div><div class="stat-value">₱2.8M</div><div class="stat-label">Subsidy released</div></div>
+                    <div class="stat-card"><div class="stat-header"><div class="stat-icon blue">⏳</div><span class="stat-change positive">12</span></div><div class="stat-value">23</div><div class="stat-label">Pending eval</div></div>
+                </div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px;"><h3 style="margin-bottom: 16px;">Recent submissions</h3><p style="color: var(--text-secondary);">Santos, J. – 2 mins ago<br>Reyes, M. – 15 mins ago</p></div>
+            </div>
+
+            <!-- Profile -->
+            <div id="profileSettings-section" class="content-section">
+                <div class="page-header"><h2>Profile</h2><p>Your account details</p></div>
+                <div class="settings-container">
+                    <div class="profile-sidebar">
+                        <div class="profile-avatar-large" id="profile-avatar-large">JD</div>
+                        <h3 id="profile-name-display" style="margin-bottom: 8px;">Juan Dela Cruz</h3>
+                    </div>
+                    <div class="settings-main">
+                        <form id="profile-form" onsubmit="saveProfile(event)">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="first-name" placeholder="First Name" value="Juan" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="last-name" placeholder="Last Name" value="Dela Cruz" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="profile-email" placeholder="Email Address" value="juan@4ps.gov" required>
+                            </div>
+                            <div style="border-top:1px solid var(--border); margin:24px 0; padding-top:16px;">
+                                <label style="display:block; font-size:13px; color:#94a3b8; margin-bottom:8px; text-transform:uppercase; font-weight:600;">Change Password</label>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                <input type="password" id="current-password" placeholder="Current Password" style="height:44px; border-radius:8px; background:rgba(0,0,0,0.25); color:white; border:1px solid rgba(255,255,255,0.1); padding:8px 12px; font-size:14px;">
+                                <input type="password" id="new-password" placeholder="New Password" style="height:44px; border-radius:8px; background:rgba(0,0,0,0.25); color:white; border:1px solid rgba(255,255,255,0.1); padding:8px 12px; font-size:14px;">
+                            </div>
+                            <input type="password" id="confirm-new-password" placeholder="Confirm New Password" style="width:100%;margin-top:10px;height:44px; border-radius:8px; background:rgba(0,0,0,0.25); color:white; border:1px solid rgba(255,255,255,0.1); padding:8px 12px; font-size:14px;">
+                            </div>
+                            <div class="settings-buttons">
+                                <button type="submit" class="btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4Ps Application with Photo -->
+            <div id="fourpsApp-section" class="content-section">
+                <div class="form-4ps" id="print-section">
+                    <!-- Form Header with Photo -->
+                    <div class="form-header">
+                        <div class="form-title-bar">4Ps LIFELINER APPLICATION FORM</div>
+                        <div class="form-header-content">
+                            <div class="header-field">
+                                <label>Distribution Utility</label>
+                                <input type="text" id="distUtility" placeholder="Manila Electric Company" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px 8px; color: white; font-size: 14px; width: 100%;">
+                            </div>
+                            <div class="header-field">
+                                <label>Application Form No.</label>
+                                <input type="text" id="formNo" placeholder="DU-2026-0311" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px 8px; color: white; font-size: 14px; width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Content -->
+                    <form id="fourpsForm" onsubmit="event.preventDefault(); submitApplication();">
+                        <!-- Name Section Table -->
+                        <table class="form-table">
+                            <tr>
+                                <td colspan="4" class="row-header">Name of Applicant</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 25%;">
+                                    <label>Surname (Apelyido)</label>
+                                    <input type="text" id="surname" placeholder="Dela Cruz">
+                                </td>
+                                <td style="width: 25%;">
+                                    <label>First Name (Pangalan)</label>
+                                    <input type="text" id="firstname" placeholder="Juan">
+                                </td>
+                                <td style="width: 25%;">
+                                    <label>Middle Name (Gitnang Pangalan)</label>
+                                    <input type="text" id="middlename" placeholder="Santos">
+                                </td>
+                                <td style="width: 25%;">
+                                    <label>Maiden Name (Pangalan sa Pagkadalaga)</label>
+                                    <input type="text" id="maiden" placeholder="(if applicable)">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Address Section Table -->
+                        <table class="form-table">
+                            <tr>
+                                <td colspan="4" class="row-header">Address</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30%;">
+                                    <label>House No./Zone/Purok/Sitio</label>
+                                    <input type="text" id="house" placeholder="123">
+                                </td>
+                                <td style="width: 30%;">
+                                    <label>Street</label>
+                                    <input type="text" id="street" placeholder="Rizal St">
+                                </td>
+                                <td style="width: 20%;">
+                                    <label>Barangay</label>
+                                    <input type="text" id="barangay" placeholder="San Jose">
+                                </td>
+                                <td style="width: 20%;">
+                                    <label>City/Municipality</label>
+                                    <input type="text" id="city" placeholder="Manila">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>Province</label>
+                                    <input type="text" id="province" placeholder="Metro Manila">
+                                </td>
+                                <td>
+                                    <label>Region</label>
+                                    <input type="text" id="region" placeholder="NCR">
+                                </td>
+                                <td colspan="2">
+                                    <label>Postal Code</label>
+                                    <input type="text" id="postal" placeholder="1000">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Personal Information Table -->
+                        <table class="form-table">
+                            <tr>
+                                <td style="width: 33%;">
+                                    <label>Date of Birth</label>
+                                    <input type="date" id="dob" value="1990-01-01" style="color-scheme: dark;">
+                                </td>
+                                <td style="width: 33%;">
+                                    <label>Marital Status</label>
+                                    <select id="marital">
+                                        <option>Single</option>
+                                        <option>Married</option>
+                                        <option>Widowed</option>
+                                        <option>Divorced</option>
+                                    </select>
+                                </td>
+                                <td style="width: 34%;">
+                                    <label>Contact Number</label>
+                                    <input type="text" id="contact" placeholder="09xxxxxxxxx">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Electric Service Table - UPDATED with Others text field -->
+                        <table class="form-table">
+                            <tr>
+                                <td style="width: 50%; vertical-align: top;">
+                                    <label>Electric Service No. / Customer/Account/Service No.</label>
+                                    <input type="text" id="acctno" placeholder="123456789">
+                                </td>
+                                <td style="width: 50%; vertical-align: top;">
+                                    <div class="ownership-container">
+                                        <div class="ownership-label">Ownership</div>
+                                        <div class="ownership-options">
+                                            <label><input type="radio" name="own" value="Rented" onchange="toggleOthersInput(this)"> Rented</label>
+                                            <label><input type="radio" name="own" value="Owned" onchange="toggleOthersInput(this)"> Owned</label>
+                                            <label><input type="radio" name="own" value="Others" onchange="toggleOthersInput(this)"> Others</label> 
+                                        </div>
+                                        <div class="ownership-others-input" id="othersInputContainer" style="display: none;">
+                                            <input type="text" id="othersSpecify" placeholder="Please specify"> 
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- 4Ps and Valid ID Table -->
+                        <table class="form-table">
+                            <tr>
+                                <td style="width: 50%;">
+                                    <label>4Ps Household ID No. (from DSWD)</label>
+                                    <input type="text" id="hhid" placeholder="4PS-XXXXX">
+                                </td>
+                                <td style="width: 50%;">
+                                    <label>Valid ID Type</label>
+                                    <input type="text" id="idtype" placeholder="UMID / Passport / Driver's License">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <label>ID No.</label>
+                                    <input type="text" id="idnum" placeholder="ID number">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Processor Section -->
+                        <table class="form-table" style="margin-top: 24px;">
+                            <tr>
+                                <td colspan="4" class="row-header" style="background-color: #1a1a2e; color: #f093fb;">To be accomplished by the processor (Ang parte na ito ay hindi kailangan sagutan ng aplikante)</td>
+                            </tr>
+                        </table>
+
+                        <div class="processor-section">
+                            <div class="processor-title">Documentary Requirements Checklist</div>
+                            <div class="document-checklist">
+                                <label><input type="checkbox" id="check1"> Duly accomplished form</label>
+                                <label><input type="checkbox" id="check2"> Most-recent electricity bill for the service being applied for</label>
+                                <label><input type="checkbox" id="check3"> Valid government-issued ID containing the signature and address of the consumer</label>
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <div class="processor-title">Other Supporting Documents</div>
+                                <div class="document-checklist">
+                                    <label><input type="checkbox" id="check4"> If electric service not registered under applicant: Proof of residence</label>
+                                    <label><input type="checkbox" id="check5"> If application through representative: Letter of Authority</label>
+                                    <label><input type="checkbox" id="check6"> Valid government-issued ID (with signature) of representative</label>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <div class="processor-title">Evaluation</div>
+                                <div class="evaluation-container">
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="eval" value="Approved"> Approved</label>
+                                        <label><input type="radio" name="eval" value="Disapproved"> Disapproved</label>
+                                    </div>
+                                    <div class="reason-field">
+                                        <label>Reason for disapproval (if applicable):</label>
+                                        <input type="text" id="reason" placeholder="Specify reason">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="processor-grid" style="margin-top: 20px;">
+                                <div class="processor-field">
+                                    <label>Processed by:</label>
+                                    <input type="text" id="procname" placeholder="Processor Name">
+                                </div>
+                                <div class="processor-field">
+                                    <label>Processor's Signature:</label>
+                                    <input type="text" id="procsig" placeholder="_____________________" class="signature-line-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Disclaimer -->
+                        <div class="disclaimer">
+                            <strong>Sa pagpirma ko, ako ay:</strong><br>
+                            1. Nagpapatunay na ang lahat ng impormasyon na nakasulat dito ay tama at totoo base sa aking pinakamahusay na kaalaman;<br>
+                            2. Pumapayag na gamitin ang aking personal na impormasyon sa pag-proseso ng aking aplikasyon, sa kondisyong nakapailalim sa Data Privacy Act of 2012; at<br>
+                            3. Ang diskwento ay naka-depende sa aking magiging consumer.
+                        </div>
+
+                        <!-- Applicant Signature -->
+                        <div style="margin-bottom: 24px;">
+                            <div class="processor-title" style="margin-bottom: 20px;">Applicant's Signature / Declaration</div>
+                            <div class="signature-section">
+                                <div class="signature-row">
+                                    <div class="signature-item">
+                                        <label>Signature</label>
+                                        <input type="text" id="appsig" placeholder="_____________________" class="signature-line-input">
+                                    </div>
+                                </div>
+                                <div class="signature-row">
+                                    <div class="signature-item">
+                                        <label>Printed Name</label>
+                                        <input type="text" id="appname" placeholder="JUAN DELA CRUZ" class="signature-line-input">
+                                        <div class="signature-caption">Signature above printed name<br>(Lagda sa taas ng pangalan)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" onclick="resetFourPs()">Reset</button>
+                            <button type="button" class="btn-primary" onclick="printApplication()">Print</button>
+                            <button type="submit" class="btn-primary" style="background: linear-gradient(135deg, #22c55e, #16a34a);">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Records section -->
+            <div id="records-section" class="content-section">
+                <div class="page-header"><h2>Application Records</h2><p>View, edit, or delete application entries</p></div>
+                <div class="record-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Form No.</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordBody">
+                            <!-- dynamic rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Viewing/Editing Applications -->
+    <div class="modal" id="applicationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">View/Edit Application</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Application form will be dynamically loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Close</button>
+                <button class="btn-primary" id="modalSaveBtn" onclick="saveEditedApplication()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== PERSISTENT RECORDS WITH AUTO DATE ==========
+        const STORAGE_KEY = '4ps_applications';
+        let currentEditIndex = -1;
+
+        // Function to toggle Others input field
+        function toggleOthersInput(radio) {
+            const container = document.getElementById('othersInputContainer');
+            if (radio.value === 'Others' && radio.checked) {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+                // Optionally clear the field when hidden
+                document.getElementById('othersSpecify').value = '';
+            }
+        }
+
+        function loadRecords() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveRecords(records) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        }
+
+        function renderRecords() {
+            const tbody = document.getElementById('recordBody');
+            const records = loadRecords();
+            tbody.innerHTML = '';
+            
+            records.forEach((rec, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${rec.date}</td>
+                    <td>${rec.name}</td>
+                    <td>${rec.formNo || '—'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="view-btn" onclick="viewApplication(${index})">👁️ View</button>
+                            <button class="edit-btn" onclick="editApplication(${index})">✏️ Edit</button>
+                            <button class="delete-btn" onclick="deleteRecord(${index})">🗑️ Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteRecord(index) {
+            if (!confirm('Are you sure you want to delete this application?')) return;
+            
+            const records = loadRecords();
+            if (index >= 0 && index < records.length) {
+                records.splice(index, 1);
+                saveRecords(records);
+                renderRecords();
+                alert('✅ Application deleted successfully!');
+            }
+        }
+
+        function viewApplication(index) {
+            const records = loadRecords();
+            if (index >= 0 && index < records.length) {
+                currentEditIndex = index;
+                const record = records[index];
+                document.getElementById('modalTitle').textContent = 'View Application (Read Only)';
+                document.getElementById('modalSaveBtn').style.display = 'none';
+                loadApplicationToModal(record, true);
+                document.getElementById('applicationModal').classList.add('active');
+            }
+        }
+
+        function editApplication(index) {
+            const records = loadRecords();
+            if (index >= 0 && index < records.length) {
+                currentEditIndex = index;
+                const record = records[index];
+                document.getElementById('modalTitle').textContent = 'Edit Application';
+                document.getElementById('modalSaveBtn').style.display = 'block';
+                loadApplicationToModal(record, false);
+                document.getElementById('applicationModal').classList.add('active');
+            }
+        }
+
+        function loadApplicationToModal(record, readOnly = false) {
+            const modalBody = document.getElementById('modalBody');
+            
+            const formHtml = `
+                <div class="form-4ps" style="padding: 0; background: transparent; box-shadow: none;">
+                    <!-- Form Header -->
+                    <div class="form-header" style="margin-bottom: 16px;">
+                        <div class="form-title-bar">4Ps LIFELINER APPLICATION FORM</div>
+                        <div class="form-header-content">
+                            <div class="header-field">
+                                <label>Distribution Utility</label>
+                                <input type="text" id="modal_distUtility" value="${escapeHtml(record.distUtility || '')}" ${readOnly ? 'readonly' : ''} style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px 8px; color: white; font-size: 14px; width: 100%;">
+                            </div>
+                            <div class="header-field">
+                                <label>Application Form No.</label>
+                                <input type="text" id="modal_formNo" value="${escapeHtml(record.formNo || '')}" ${readOnly ? 'readonly' : ''} style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px 8px; color: white; font-size: 14px; width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Name Section -->
+                    <table class="form-table">
+                        <tr><td colspan="4" class="row-header">Name of Applicant</td></tr>
+                        <tr>
+                            <td><label>Surname</label><input type="text" id="modal_surname" value="${escapeHtml(record.surname || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>First Name</label><input type="text" id="modal_firstname" value="${escapeHtml(record.firstname || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>Middle Name</label><input type="text" id="modal_middlename" value="${escapeHtml(record.middlename || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>Maiden Name</label><input type="text" id="modal_maiden" value="${escapeHtml(record.maiden || '')}" ${readOnly ? 'readonly' : ''}></td>
+                        </tr>
+                    </table>
+
+                    <!-- Address Section -->
+                    <table class="form-table">
+                        <tr><td colspan="4" class="row-header">Address</td></tr>
+                        <tr>
+                            <td><label>House No.</label><input type="text" id="modal_house" value="${escapeHtml(record.house || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>Street</label><input type="text" id="modal_street" value="${escapeHtml(record.street || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>Barangay</label><input type="text" id="modal_barangay" value="${escapeHtml(record.barangay || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>City</label><input type="text" id="modal_city" value="${escapeHtml(record.city || '')}" ${readOnly ? 'readonly' : ''}></td>
+                        </tr>
+                        <tr>
+                            <td><label>Province</label><input type="text" id="modal_province" value="${escapeHtml(record.province || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>Region</label><input type="text" id="modal_region" value="${escapeHtml(record.region || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td colspan="2"><label>Postal Code</label><input type="text" id="modal_postal" value="${escapeHtml(record.postal || '')}" ${readOnly ? 'readonly' : ''}></td>
+                        </tr>
+                    </table>
+
+                    <!-- Personal Information -->
+                    <table class="form-table">
+                        <tr>
+                            <td><label>Date of Birth</label><input type="date" id="modal_dob" value="${escapeHtml(record.dob || '1990-01-01')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>Marital Status</label>
+                                <select id="modal_marital" ${readOnly ? 'disabled' : ''}>
+                                    <option ${record.marital === 'Single' ? 'selected' : ''}>Single</option>
+                                    <option ${record.marital === 'Married' ? 'selected' : ''}>Married</option>
+                                    <option ${record.marital === 'Widowed' ? 'selected' : ''}>Widowed</option>
+                                    <option ${record.marital === 'Divorced' ? 'selected' : ''}>Divorced</option>
+                                </select>
+                            </td>
+                            <td><label>Contact</label><input type="text" id="modal_contact" value="${escapeHtml(record.contact || '')}" ${readOnly ? 'readonly' : ''}></td>
+                        </tr>
+                    </table>
+
+                    <!-- Electric Service - UPDATED -->
+                    <table class="form-table">
+                        <tr>
+                            <td><label>Account No.</label><input type="text" id="modal_acctno" value="${escapeHtml(record.acctno || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td>
+                                <div class="ownership-container">
+                                    <div class="ownership-label">Ownership</div>
+                                    <div class="ownership-options">
+                                        <label><input type="radio" name="modal_own" value="Owned" ${record.ownership === 'Owned' ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Owned</label>
+                                        <label><input type="radio" name="modal_own" value="Rented" ${record.ownership === 'Rented' ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Rented</label>
+                                        <label><input type="radio" name="modal_own" value="Others" ${record.ownership === 'Others' ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Others</label>
+                                    </div>
+                                    <div class="ownership-others-input" id="modal_othersInputContainer" style="${record.ownership === 'Others' ? 'display:block;' : 'display:none;'} margin-left:26px; margin-top:4px;">
+                                        <input type="text" id="modal_othersSpecify" value="${escapeHtml(record.othersSpecify || '')}" placeholder="Please specify" ${readOnly ? 'readonly' : ''} style="width:100%; height:32px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:4px; padding:4px 8px; color:white; font-size:13px;">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- 4Ps and ID -->
+                    <table class="form-table">
+                        <tr>
+                            <td><label>4Ps Household ID</label><input type="text" id="modal_hhid" value="${escapeHtml(record.hhid || '')}" ${readOnly ? 'readonly' : ''}></td>
+                            <td><label>ID Type</label><input type="text" id="modal_idtype" value="${escapeHtml(record.idtype || '')}" ${readOnly ? 'readonly' : ''}></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><label>ID No.</label><input type="text" id="modal_idnum" value="${escapeHtml(record.idnum || '')}" ${readOnly ? 'readonly' : ''}></td>
+                        </tr>
+                    </table>
+
+                    <!-- Processor Section -->
+                    <div class="processor-section" style="margin-top: 16px;">
+                        <div class="processor-title">Documentary Requirements</div>
+                        <div class="document-checklist">
+                            <label><input type="checkbox" id="modal_check1" ${record.check1 ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Duly accomplished form</label>
+                            <label><input type="checkbox" id="modal_check2" ${record.check2 ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Most-recent electricity bill</label>
+                            <label><input type="checkbox" id="modal_check3" ${record.check3 ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Valid government ID</label>
+                        </div>
+
+                        <div style="margin-top: 16px;">
+                            <div class="processor-title">Other Supporting Documents</div>
+                            <div class="document-checklist">
+                                <label><input type="checkbox" id="modal_check4" ${record.check4 ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Proof of residence</label>
+                                <label><input type="checkbox" id="modal_check5" ${record.check5 ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Letter of Authority</label>
+                                <label><input type="checkbox" id="modal_check6" ${record.check6 ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Representative ID</label>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 16px;">
+                            <div class="processor-title">Evaluation</div>
+                            <div class="evaluation-container">
+                                <div class="radio-group">
+                                    <label><input type="radio" name="modal_eval" value="Approved" ${record.evaluation === 'Approved' ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Approved</label>
+                                    <label><input type="radio" name="modal_eval" value="Disapproved" ${record.evaluation === 'Disapproved' ? 'checked' : ''} ${readOnly ? 'disabled' : ''}> Disapproved</label>
+                                </div>
+                                <div class="reason-field">
+                                    <label>Reason:</label>
+                                    <input type="text" id="modal_reason" value="${escapeHtml(record.reason || '')}" ${readOnly ? 'readonly' : ''}>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="processor-grid" style="margin-top: 16px;">
+                            <div class="processor-field">
+                                <label>Processed by:</label>
+                                <input type="text" id="modal_procname" value="${escapeHtml(record.procname || '')}" ${readOnly ? 'readonly' : ''}>
+                            </div>
+                            <div class="processor-field">
+                                <label>Processor's Signature:</label>
+                                <input type="text" id="modal_procsig" value="${escapeHtml(record.procsig || '')}" class="signature-line-input" ${readOnly ? 'readonly' : ''}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signatures -->
+                    <div style="margin-top: 16px;">
+                        <div class="signature-section" style="padding: 16px;">
+                            <div class="signature-row">
+                                <div class="signature-item">
+                                    <label>Applicant Signature</label>
+                                    <input type="text" id="modal_appsig" value="${escapeHtml(record.appsig || '')}" class="signature-line-input" ${readOnly ? 'readonly' : ''}>
+                                </div>
+                            </div>
+                            <div class="signature-row">
+                                <div class="signature-item">
+                                    <label>Printed Name</label>
+                                    <input type="text" id="modal_appname" value="${escapeHtml(record.appname || '')}" class="signature-line-input" ${readOnly ? 'readonly' : ''}>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modalBody.innerHTML = formHtml;
+            
+            // Add event listener for modal radio buttons to toggle others field
+            if (!readOnly) {
+                const radios = document.querySelectorAll('input[name="modal_own"]');
+                radios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        const container = document.getElementById('modal_othersInputContainer');
+                        if (this.value === 'Others' && this.checked) {
+                            container.style.display = 'block';
+                        } else {
+                            container.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function saveEditedApplication() {
+            if (currentEditIndex === -1) return;
+            
+            const records = loadRecords();
+            if (currentEditIndex >= 0 && currentEditIndex < records.length) {
+                const updatedRecord = {
+                    date: records[currentEditIndex].date, // preserve original date
+                    name: (document.getElementById('modal_surname')?.value || '') + ', ' + (document.getElementById('modal_firstname')?.value || ''),
+                    formNo: document.getElementById('modal_formNo')?.value || '',
+                    distUtility: document.getElementById('modal_distUtility')?.value || '',
+                    surname: document.getElementById('modal_surname')?.value || '',
+                    firstname: document.getElementById('modal_firstname')?.value || '',
+                    middlename: document.getElementById('modal_middlename')?.value || '',
+                    maiden: document.getElementById('modal_maiden')?.value || '',
+                    house: document.getElementById('modal_house')?.value || '',
+                    street: document.getElementById('modal_street')?.value || '',
+                    barangay: document.getElementById('modal_barangay')?.value || '',
+                    city: document.getElementById('modal_city')?.value || '',
+                    province: document.getElementById('modal_province')?.value || '',
+                    region: document.getElementById('modal_region')?.value || '',
+                    postal: document.getElementById('modal_postal')?.value || '',
+                    dob: document.getElementById('modal_dob')?.value || '',
+                    marital: document.getElementById('modal_marital')?.value || '',
+                    contact: document.getElementById('modal_contact')?.value || '',
+                    acctno: document.getElementById('modal_acctno')?.value || '',
+                    ownership: document.querySelector('input[name="modal_own"]:checked')?.value || '',
+                    othersSpecify: document.getElementById('modal_othersSpecify')?.value || '',
+                    hhid: document.getElementById('modal_hhid')?.value || '',
+                    idtype: document.getElementById('modal_idtype')?.value || '',
+                    idnum: document.getElementById('modal_idnum')?.value || '',
+                    check1: document.getElementById('modal_check1')?.checked || false,
+                    check2: document.getElementById('modal_check2')?.checked || false,
+                    check3: document.getElementById('modal_check3')?.checked || false,
+                    check4: document.getElementById('modal_check4')?.checked || false,
+                    check5: document.getElementById('modal_check5')?.checked || false,
+                    check6: document.getElementById('modal_check6')?.checked || false,
+                    evaluation: document.querySelector('input[name="modal_eval"]:checked')?.value || '',
+                    reason: document.getElementById('modal_reason')?.value || '',
+                    procname: document.getElementById('modal_procname')?.value || '',
+                    procsig: document.getElementById('modal_procsig')?.value || '',
+                    appsig: document.getElementById('modal_appsig')?.value || '',
+                    appname: document.getElementById('modal_appname')?.value || ''
+                };
+                
+                records[currentEditIndex] = updatedRecord;
+                saveRecords(records);
+                renderRecords();
+                closeModal();
+                alert('✅ Application updated successfully!');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('applicationModal').classList.remove('active');
+            currentEditIndex = -1;
+        }
+
+        function addRecord(name, formNo) {
+            const records = loadRecords();
+            
+            // AUTO DATE: get current date in YYYY-MM-DD format
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const currentDate = `${year}-${month}-${day}`;
+            
+            const newRecord = {
+                date: currentDate,   // <--- auto‑generated date
+                name: name,
+                formNo: formNo,
+                distUtility: document.getElementById('distUtility')?.value || '',
+                surname: document.getElementById('surname')?.value || '',
+                firstname: document.getElementById('firstname')?.value || '',
+                middlename: document.getElementById('middlename')?.value || '',
+                maiden: document.getElementById('maiden')?.value || '',
+                house: document.getElementById('house')?.value || '',
+                street: document.getElementById('street')?.value || '',
+                barangay: document.getElementById('barangay')?.value || '',
+                city: document.getElementById('city')?.value || '',
+                province: document.getElementById('province')?.value || '',
+                region: document.getElementById('region')?.value || '',
+                postal: document.getElementById('postal')?.value || '',
+                dob: document.getElementById('dob')?.value || '',
+                marital: document.getElementById('marital')?.value || '',
+                contact: document.getElementById('contact')?.value || '',
+                acctno: document.getElementById('acctno')?.value || '',
+                ownership: document.querySelector('input[name="own"]:checked')?.value || '',
+                othersSpecify: document.getElementById('othersSpecify')?.value || '',
+                hhid: document.getElementById('hhid')?.value || '',
+                idtype: document.getElementById('idtype')?.value || '',
+                idnum: document.getElementById('idnum')?.value || '',
+                check1: document.getElementById('check1')?.checked || false,
+                check2: document.getElementById('check2')?.checked || false,
+                check3: document.getElementById('check3')?.checked || false,
+                check4: document.getElementById('check4')?.checked || false,
+                check5: document.getElementById('check5')?.checked || false,
+                check6: document.getElementById('check6')?.checked || false,
+                evaluation: document.querySelector('input[name="eval"]:checked')?.value || '',
+                reason: document.getElementById('reason')?.value || '',
+                procname: document.getElementById('procname')?.value || '',
+                procsig: document.getElementById('procsig')?.value || '',
+                appsig: document.getElementById('appsig')?.value || '',
+                appname: document.getElementById('appname')?.value || ''
+            };
+            
+            records.unshift(newRecord);
+            saveRecords(records);
+            renderRecords();
+        }
+
+        function submitApplication() {
+            const surname = document.getElementById('surname')?.value.trim() || '—';
+            const first = document.getElementById('firstname')?.value.trim() || '—';
+            const formNo = document.getElementById('formNo')?.value.trim() || '—';
+            const fullName = `${surname}, ${first}`;
+            
+            addRecord(fullName, formNo);
+            
+            alert(`✅ Application submitted!\n${fullName} — Form No. ${formNo}\nRecord saved with date: ${new Date().toISOString().slice(0,10)}`);
+        }
+
+        // ========== EXISTING FUNCTIONS (unchanged) ==========
+        const AppState = {
+            saveCurrentPage: (page) => localStorage.setItem('4ps_currentPage', page),
+            getCurrentPage: () => localStorage.getItem('4ps_currentPage') || 'overview',
+            saveUserData: (data) => localStorage.setItem('4ps_userData', JSON.stringify(data)),
+            getUserData: () => JSON.parse(localStorage.getItem('4ps_userData')) || null,
+            saveLoginState: (isLoggedIn) => localStorage.setItem('4ps_isLoggedIn', isLoggedIn),
+            isLoggedIn: () => localStorage.getItem('4ps_isLoggedIn') === 'true',
+            clearAll: () => {
+                localStorage.removeItem('4ps_currentPage');
+                localStorage.removeItem('4ps_userData');
+                localStorage.removeItem('4ps_isLoggedIn');
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderRecords();
+            
+            if (AppState.isLoggedIn()) {
+                const userData = AppState.getUserData();
+                showDashboard(userData.email, userData.name);
+                const savedPage = AppState.getCurrentPage();
+                showSection(savedPage);
+            }
+        });
+
+        function togglePassword(id, btn) {
+            const i = document.getElementById(id);
+            const ic = btn.querySelector('span');
+            if (i.type === 'password') { i.type = 'text'; ic.classList.remove('icon-eye'); ic.classList.add('icon-eye-off'); } 
+            else { i.type = 'password'; ic.classList.remove('icon-eye-off'); ic.classList.add('icon-eye'); }
+        }
+        
+        function switchToSignIn() {
+            document.getElementById('register-section').classList.add('hidden');
+            document.getElementById('signin-section').classList.remove('hidden');
+        }
+        
+        function switchToRegister() {
+            document.getElementById('signin-section').classList.add('hidden');
+            document.getElementById('register-section').classList.remove('hidden');
+        }
+        
+        function handleRegister(e) {
+            e.preventDefault();
+            const firstname = document.getElementById('reg-firstname').value;
+            const lastname = document.getElementById('reg-lastname').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+            const phone = document.getElementById('reg-phone').value;
+            if (password !== confirmPassword) { alert('❌ Passwords do not match!'); return; }
+            document.getElementById('register-btn').innerHTML = '<span class="loading"></span>';
+            setTimeout(() => {
+                alert(`✅ Account created!\nName: ${firstname} ${lastname}\nEmail: ${email}\nPhone: ${phone}\n\nYou can now sign in.`);
+                document.getElementById('register-form').reset();
+                document.getElementById('register-btn').innerHTML = 'Create Account';
+                switchToSignIn();
+                document.getElementById('signin-email').value = email;
+                document.getElementById('signin-password').value = password;
+            }, 1500);
+        }
+        
+        function handleSignIn(e) {
+            e.preventDefault();
+            document.getElementById('signin-btn').innerHTML = '<span class="loading"></span>';
+            const email = document.getElementById('signin-email').value;
+            const fname = email.split('@')[0].split('.')[0] || 'User';
+            setTimeout(() => {
+                showDashboard(email, fname);
+                AppState.saveLoginState(true);
+                AppState.saveUserData({ email, name: fname });
+                document.getElementById('signin-btn').innerHTML = 'Sign In';
+            }, 1500);
+        }
+        
+        function showDashboard(email, name = 'User') {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('dashboard-container').classList.add('active');
+            const initials = (name.charAt(0) + (name.split(' ')[1]?.charAt(0) || name.charAt(1))).toUpperCase();
+            const fullName = name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            document.getElementById('user-name').innerText = fullName;
+            document.getElementById('user-email').innerText = email;
+            document.getElementById('user-avatar').innerText = initials;
+            document.getElementById('profile-avatar-large').innerText = initials;
+            document.getElementById('profile-name-display').innerText = fullName;
+            document.getElementById('profile-email').value = email;
+            const nameParts = fullName.split(' ');
+            document.getElementById('first-name').value = nameParts[0];
+            document.getElementById('last-name').value = nameParts.slice(1).join(' ');
+        }
+        
+        function logout() {
+            if (confirm('Logout?')) {
+                document.getElementById('dashboard-container').classList.remove('active');
+                document.getElementById('auth-container').style.display = 'flex';
+                switchToRegister();
+                document.getElementById('register-form').reset();
+                document.getElementById('signin-form').reset();
+                AppState.clearAll();
+                closeModal();
+            }
+        }
+        
+        function showSection(section) {
+            AppState.saveCurrentPage(section);
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.textContent.toLowerCase().includes(section === 'overview' ? 'dashboard' : section === 'profileSettings' ? 'profile' : section === 'fourpsApp' ? '4ps' : 'record'))
+                    link.classList.add('active');
+            });
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            if (section === 'profileSettings') document.getElementById('profileSettings-section').classList.add('active');
+            else if (section === 'fourpsApp') document.getElementById('fourpsApp-section').classList.add('active');
+            else if (section === 'records') document.getElementById('records-section').classList.add('active');
+            else document.getElementById('overview-section').classList.add('active');
+            if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+        }
+        
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function resetFourPs() { 
+            document.getElementById('fourpsForm').reset();
+            document.getElementById('othersInputContainer').style.display = 'none';
+        }
+        function printApplication() { window.print(); }
+        
+        function saveProfile(e) {
+            e.preventDefault();
+            const firstName = document.getElementById('first-name').value.trim();
+            const lastName = document.getElementById('last-name').value.trim();
+            const email = document.getElementById('profile-email').value.trim();
+            if (!firstName || !lastName || !email) { alert('❌ Fill in all fields!'); return; }
+            const fullName = `${firstName} ${lastName}`;
+            document.getElementById('profile-name-display').innerText = fullName;
+            document.getElementById('user-name').innerText = fullName;
+            document.getElementById('user-email').innerText = email;
+            const userData = AppState.getUserData() || {};
+            userData.name = fullName;
+            userData.email = email;
+            AppState.saveUserData(userData);
+            alert(`✅ Profile updated!\nName: ${fullName}\nEmail: ${email}`);
+        }
+        
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('applicationModal');
+            const s = document.getElementById('sidebar');
+            const m = document.querySelector('.menu-toggle');
+            
+            if (modal.classList.contains('active') && e.target === modal) {
+                closeModal();
+            }   
+            
+            if (window.innerWidth <= 768 && s.classList.contains('open') && !s.contains(e.target) && !m.contains(e.target)) {
+                s.classList.remove('open');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
